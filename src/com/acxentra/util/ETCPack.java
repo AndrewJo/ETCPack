@@ -1,6 +1,29 @@
 package com.acxentra.util;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import android.util.Log;
+
+/**
+ * Written by Andrew Jo.
+ * @author Andrew Jo
+ * This code is licensed under Apache License, version 2.0
+ * See LICENSE.md for more information.
+ */
 public final class ETCPack {
+	public static final String LOG = "ETCPack";
+	public enum CompressionSpeed {
+		FAST,
+		MEDIUM,
+		SLOW
+	}
+	
+	public enum ErrorMetric {
+		PERCEPTUAL,
+		NON_PERCEPTUAL
+	}
+	
 	// The error metric Wr Wg Wb should be definied so that Wr^2 + Wg^2 + Wb^2 = 1.
 	// Hence it is easier to first define the squared values and derive the weights
 	// as their square-roots.
@@ -54,7 +77,7 @@ public final class ETCPack {
 		FIRST_PIXEL_IN_PPM_FILE_MAPS_TO_S0T1
 	}
 	
-	int orientation;
+	static PpmFileFormat orientation = PpmFileFormat.FIRST_PIXEL_IN_PPM_FILE_MAPS_TO_S0T0;
 	
 	int ktx_mode;
 	
@@ -124,5 +147,43 @@ public final class ETCPack {
 	int[] ktx_identifier = KTX_IDENTIFIER_REF;
 	
 	static int[][] compressParamsEnc = new int[16][4];
+	
+	static boolean readSrcFile() {
+		int w1, h1;
+		int wdiv4, hdiv4;
+		
+		boolean flip;
+		
+		flip = orientation == PpmFileFormat.FIRST_PIXEL_IN_PPM_FILE_MAPS_TO_S0T0;
+		
+		// TODO: Remove this later.
+		return false;
+	}
+	
+	public static void readCompressParamsEnc() {
+		compressParamsEnc[0][0]  =  -8; compressParamsEnc[0][1]  =  -2; compressParamsEnc[0][2]  =  2; compressParamsEnc[0][3]  =   8;
+		compressParamsEnc[1][0]  =  -8; compressParamsEnc[1][1]  =  -2; compressParamsEnc[1][2]  =  2; compressParamsEnc[1][3]  =   8;
+		compressParamsEnc[2][0]  = -17; compressParamsEnc[2][1]  =  -5; compressParamsEnc[2][2]  =  5; compressParamsEnc[2][3]  =  17;
+		compressParamsEnc[3][0]  = -17; compressParamsEnc[3][1]  =  -5; compressParamsEnc[3][2]  =  5; compressParamsEnc[3][3]  =  17;
+		compressParamsEnc[4][0]  = -29; compressParamsEnc[4][1]  =  -9; compressParamsEnc[4][2]  =  9; compressParamsEnc[4][3]  =  29;
+		compressParamsEnc[5][0]  = -29; compressParamsEnc[5][1]  =  -9; compressParamsEnc[5][2]  =  9; compressParamsEnc[5][3]  =  29;
+		compressParamsEnc[6][0]  = -42; compressParamsEnc[6][1]  = -13; compressParamsEnc[6][2]  = 13; compressParamsEnc[6][3]  =  42;
+		compressParamsEnc[7][0]  = -42; compressParamsEnc[7][1]  = -13; compressParamsEnc[7][2]  = 13; compressParamsEnc[7][3]  =  42;
+		compressParamsEnc[8][0]  = -60; compressParamsEnc[8][1]  = -18; compressParamsEnc[8][2]  = 18; compressParamsEnc[8][3]  =  60;
+		compressParamsEnc[9][0]  = -60; compressParamsEnc[9][1]  = -18; compressParamsEnc[9][2]  = 18; compressParamsEnc[9][3]  =  60;
+		compressParamsEnc[10][0] = -80; compressParamsEnc[10][1] = -24; compressParamsEnc[10][2] = 24; compressParamsEnc[10][3] =  80;
+		compressParamsEnc[11][0] = -80; compressParamsEnc[11][1] = -24; compressParamsEnc[11][2] = 24; compressParamsEnc[11][3] =  80;
+		compressParamsEnc[12][0] =-106; compressParamsEnc[12][1] = -33; compressParamsEnc[12][2] = 33; compressParamsEnc[12][3] = 106;
+		compressParamsEnc[13][0] =-106; compressParamsEnc[13][1] = -33; compressParamsEnc[13][2] = 33; compressParamsEnc[13][3] = 106;
+		compressParamsEnc[14][0] =-183; compressParamsEnc[14][1] = -47; compressParamsEnc[14][2] = 47; compressParamsEnc[14][3] = 183;
+		compressParamsEnc[15][0] =-183; compressParamsEnc[15][1] = -47; compressParamsEnc[15][2] = 47; compressParamsEnc[15][3] = 183;
+	}
+	
+	public static void compressFile(InputStream srcFileStream, OutputStream dstFileStream, CompressionSpeed compressionSpeed, ErrorMetric errorMetric) {
+		Log.i(LOG, "Using " + compressionSpeed.toString() + " compression mode and " + errorMetric.toString() + " error metric");
+		Log.v(LOG, orientation == PpmFileFormat.FIRST_PIXEL_IN_PPM_FILE_MAPS_TO_S0T0 ? "s=0, t=0." : "s=0, t=1.");
+		
+		readCompressParamsEnc();
+	}
 }
 
